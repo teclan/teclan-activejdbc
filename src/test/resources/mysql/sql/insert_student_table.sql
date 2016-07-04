@@ -1,0 +1,1 @@
+insert into student(name,age,sex) values ('Declan',23,'man');
