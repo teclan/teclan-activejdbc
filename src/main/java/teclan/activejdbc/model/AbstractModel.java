@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.javalite.activejdbc.Model;
 
-import teclan.activejdbc.utils.GsonUtils;
-import teclan.activejdbc.utils.Strings;
+import teclan.utils.GsonUtils;
+import teclan.utils.Strings;
 
 public abstract class AbstractModel extends Model {
 

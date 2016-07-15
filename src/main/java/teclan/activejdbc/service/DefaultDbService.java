@@ -19,7 +19,7 @@ import teclan.activejdbc.db.DataSource;
 import teclan.activejdbc.db.Database;
 import teclan.activejdbc.model.DbField;
 import teclan.activejdbc.model.DbRecord;
-import teclan.activejdbc.utils.FileTools;
+import teclan.utils.FileUtils;
 
 public abstract class DefaultDbService implements DbService {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -951,7 +951,7 @@ public abstract class DefaultDbService implements DbService {
      */
     public void execute(String name, File file) {
 
-        String[] contents = FileTools.getContent(file).split("#");
+        String[] contents = FileUtils.getContent(file).split("#");
 
         if (contents == null) {
             LOGGER.warn("脚本内容为空!:{}", file.getAbsolutePath());

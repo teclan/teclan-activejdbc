@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import teclan.activejdbc.utils.Strings;
+import teclan.utils.Strings;
 
 public class Database {
     private static final Logger LOGGER = LoggerFactory

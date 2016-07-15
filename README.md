@@ -1,60 +1,9 @@
 
 
- # 提供主流数据库（Oracle9i+,SqlServer2k+,mysql5.6+,DB28.5+,达梦7+，金仓）的常见操作支持
+  提供主流数据库（Oracle9i+,SqlServer2k+,mysql5.6+,DB28.5+,达梦7+，金仓）的常见操作支持，
  
- ```Java
-
-     String getDriverClass();
-
-     String getUrlTemplate();
-
-     ArrayList<String> getTables() throws SQLException;
-
-     boolean hasTable(String tableName);
-
-     boolean openDatabase();
-
-     void closeDatabase();
-
-     boolean openDatabase(String name);
-
-     void closeDatabase(String name);
-
-     boolean hasConnected();
-
-     boolean hasConnected(String name);
-
-     boolean Triggerexists(String tableName, String action);
-
-     void createTrigger(String tableName);
-
-     void removeTrigger(String tableName);
-
-     void createEventTable();
-
-     void dropEventTable();
-
-     DbType getDbType();
-
-     void retrieve(String table);
-
-     void retrieveWithoutAdapter(String table, String action, String[] pkNames, Object[] newPkValues, Object[] oldPkValues);
-
-     void retrieve(String table, String action, String[] pkNames,Object[] newPkValues, Object[] oldPkValues);
-
-     Map<String, String> getTableColumns(String tableName);
-
-     List<String> getPkNames(String table);
-
-     void execute(String sql);
-
-     void execute(String name, String sql);
-
-     void execute(File file);
-
-     void execute(String name, File file);
-
-  ``` 
+  常见的数据库操作相关SQL，请点击[这里](https://teclan.github.io/2016/07/15/%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9CSQL/)
+ 
 
  关于Activejdbc,所有的表必须有 id 字段,并且是自增的,例如mysql数据库表结构应该如下:
  

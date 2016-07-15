@@ -10,7 +10,7 @@ import teclan.activejdbc.db.DataSource;
 import teclan.activejdbc.model.DbRecord;
 import teclan.activejdbc.service.DbType;
 import teclan.activejdbc.service.DefaultDbService;
-import teclan.activejdbc.utils.Strings;
+import teclan.utils.Strings;
 
 public class Db2Service extends DefaultDbService {
     private static final String DRIVER_CLASS = "COM.ibm.db2os390.sqlj.jdbc.DB2SQLJDriver";
