@@ -85,7 +85,9 @@ public class KingbaseService extends DefaultDbService {
 
     @Override
     protected String getSelectPkNamesSql(final String table) {
-        return String.format(SELECT_PK_NAMES_SQL_TEMPLATE, getSchema(), table);
+        return String.format(SELECT_PK_NAMES_SQL_TEMPLATE, getSchema(),
+                getSchema(), getDbName(), table);
+
     }
 
     @Override
