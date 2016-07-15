@@ -824,16 +824,25 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("TINYINT", DataType.INTEGER);
             dbDataTypes.put("INTEGER", DataType.INTEGER);
 
+            // mysql
+            dbDataTypes.put("YEAR", DataType.INTEGER);
+
             dbDataTypes.put("BIGINT", DataType.LONG);
             dbDataTypes.put("LONG", DataType.LONG);
 
             dbDataTypes.put("FLOAT", DataType.FLOAT);
 
             // data type of NUMBER and DOUBLE processed in the same way
-            dbDataTypes.put("NUMERIC", DataType.INTEGER);
 
+            // FIXME(Pudgecon)
+            // 临时修改
+            // 需要改正
+            // dbDataTypes.put("NUMERIC", DataType.INTEGER);
+
+            dbDataTypes.put("NUMERIC", DataType.NUMBER);
             dbDataTypes.put("NUMBER", DataType.NUMBER);
-            // ---
+            dbDataTypes.put("DEC", DataType.NUMBER);
+
             dbDataTypes.put("DECIMAL", DataType.DOUBLE);
             dbDataTypes.put("REAL", DataType.DOUBLE);
             dbDataTypes.put("SINGLE", DataType.DOUBLE);
@@ -852,11 +861,27 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("NVARCHAR2", DataType.STRING);
             dbDataTypes.put("CHARACTER", DataType.STRING);
             dbDataTypes.put("CHARACTER VARYING", DataType.STRING);
+            // DM
+            dbDataTypes.put("INTERVAL YEAR", DataType.STRING);
+            dbDataTypes.put("INTERVAL YEAR TO MONTH", DataType.STRING);
+            dbDataTypes.put("INTERVAL MONTH", DataType.STRING);
+            dbDataTypes.put("INTERVAL DAY", DataType.STRING);
+            dbDataTypes.put("INTERVAL DAY TO HOUR", DataType.STRING);
+            dbDataTypes.put("INTERVAL DAY TO MINUT", DataType.STRING);
+            dbDataTypes.put("INTERVAL DAY TO SECOND", DataType.STRING);
+            dbDataTypes.put("INTERVAL HOUR", DataType.STRING);
+            dbDataTypes.put("INTERVAL HOUR TO MINUTE", DataType.STRING);
+            dbDataTypes.put("INTERVAL HOUR TO SECOND", DataType.STRING);
+            dbDataTypes.put("INTERVAL MINUTE", DataType.STRING);
+            dbDataTypes.put("INTERVAL MINUTE TO SECOND", DataType.STRING);
+            dbDataTypes.put("INTERVAL SECOND", DataType.STRING);
+            // DM
+            dbDataTypes.put("BINARY", DataType.STRING);
+            dbDataTypes.put("VARBINARY", DataType.STRING);
 
             dbDataTypes.put("BOOL", DataType.BOOLEAN);
             dbDataTypes.put("BOOLEAN", DataType.BOOLEAN);
 
-            dbDataTypes.put("YEAR", DataType.DATETIME);
             dbDataTypes.put("TIME", DataType.DATETIME);
             dbDataTypes.put("DATE", DataType.DATETIME);
             dbDataTypes.put("DATETIME", DataType.DATETIME);
@@ -868,8 +893,11 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("TIMESTAMP(6) WITH TIME ZONE", DataType.DATETIME);
             dbDataTypes.put("TIMESTAMP(6) WITH LOCAL TIME ZONE",
                     DataType.DATETIME);
-            /* ORACLE */
+            /* DM */
+            dbDataTypes.put("TIMESTAMP WITH LOCAL TIME ZONE",
+                    DataType.DATETIME);
 
+            /* ORACLE */
             dbDataTypes.put("TEXT", DataType.CLOB);
             dbDataTypes.put("NTEXT", DataType.CLOB);
             dbDataTypes.put("MEMO", DataType.CLOB);
@@ -882,7 +910,6 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("BINARY_DOUBLE", DataType.BLOB);
             dbDataTypes.put("BINARY LARGE OBJECT", DataType.BLOB);
             dbDataTypes.put("BYTE", DataType.BLOB);
-            dbDataTypes.put("BIT", DataType.BLOB);
             dbDataTypes.put("RAW", DataType.BLOB);
             dbDataTypes.put("LONG RAW", DataType.BLOB);
             dbDataTypes.put("BLOB", DataType.BLOB);
@@ -890,6 +917,15 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("BINARY", DataType.BLOB);
             dbDataTypes.put("VARBINARY", DataType.BLOB);
             dbDataTypes.put("IMAGE", DataType.BLOB);
+        }
+
+        if ("kingbase".equals(getDbType())) {
+            // kingbase
+            dbDataTypes.put("BIT", DataType.BOOLEAN);
+            dbDataTypes.put("BIT VARYING", DataType.STRING);
+        } else {
+            // DM,mysql
+            dbDataTypes.put("BIT", DataType.INTEGER);
         }
 
         return dbDataTypes;

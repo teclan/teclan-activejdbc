@@ -53,6 +53,24 @@ public class DbField {
             }
         }
 
+        // for BIT ,not kingbase
+        if (DataType.INTEGER.equals(dataType)) {
+            if (value.equals(true)) {
+                valueToConvert = 1;
+            } else if (value.equals(false)) {
+                valueToConvert = 0;
+            }
+        }
+
+        // for kingbase
+        if (DataType.BOOLEAN.equals(dataType)) {
+            if (value.equals("1")) {
+                valueToConvert = true;
+            } else {
+                valueToConvert = false;
+            }
+        }
+
         this.value = (valueToConvert == null ? null
                 : Convert.toBytes(valueToConvert));
     }
