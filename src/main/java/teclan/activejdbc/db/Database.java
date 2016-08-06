@@ -105,6 +105,7 @@ public class Database {
             new DB(name).open(DATA_SOURCES.get(generateKeyForPool(dataSource)));
             return true;
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return false;
         }
     }

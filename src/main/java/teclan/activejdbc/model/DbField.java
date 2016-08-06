@@ -2,6 +2,7 @@ package teclan.activejdbc.model;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 
 import org.javalite.common.Convert;
@@ -9,8 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import teclan.activejdbc.service.DataType;
-import teclan.activejdbc.utils.JsonBuilder;
-import teclan.activejdbc.utils.JsonParser;
+import teclan.utils.Bytes;
+import teclan.utils.JsonBuilder;
+import teclan.utils.JsonParser;
 
 public class DbField {
     private static final Logger LOGGER = LoggerFactory.getLogger(DbField.class);
@@ -35,6 +37,11 @@ public class DbField {
         this.key = key;
         this.dataType = dataType;
 
+        if (value == null) {
+            this.value = null;
+            return;
+        }
+
         Object valueToConvert = value;
         if (DataType.DATETIME.equals(dataType)) {
             if (value instanceof java.util.Date) {
@@ -50,16 +57,45 @@ public class DbField {
                 } catch (SQLException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
+            } else if (value instanceof oracle.sql.TIMESTAMPLTZ) {
+                try {
+                    // FIX ME
+                    // Teclan
+                    // 数据表字段 TIMESTAMP(6) WITH LOCAL TIME ZONE
+                    // 此处还未找到将字段值转成long的方法，暂时使用当前发送时间代替
+                    valueToConvert = new Date().getTime();
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            } else if (value instanceof oracle.sql.TIMESTAMPTZ) {
+                try {
+                    // FIX ME
+                    // Teclan
+                    // 数据表字段 TIMESTAMP(6) WITH TIME ZONE
+                    // 此处还未找到将字段值转成long的方法，暂时使用当前发送时间代替
+                    valueToConvert = new Date().getTime();
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
             }
         }
 
-        // for BIT ,not kingbase
+        // for BIT
         if (DataType.INTEGER.equals(dataType)) {
+
             if (value.equals(true)) {
                 valueToConvert = 1;
             } else if (value.equals(false)) {
                 valueToConvert = 0;
             }
+
+        }
+
+        // for mysql BINARY
+        if (DataType.MYSQL_BINARY.equals(dataType)) {
+
+            valueToConvert = "0x" + Bytes.toHexString((byte[]) value);
+            this.dataType = DataType.STRING;
         }
 
         // for kingbase

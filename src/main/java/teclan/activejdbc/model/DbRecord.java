@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 
-import teclan.activejdbc.utils.JsonBuilder;
+import teclan.utils.JsonBuilder;
 
 public class DbRecord {
 

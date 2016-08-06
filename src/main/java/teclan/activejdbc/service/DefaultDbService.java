@@ -363,6 +363,11 @@ public abstract class DefaultDbService implements DbService {
             }
             DbField field = new DbField(pkNamesList.get(i),
                     row.get(pkNamesList.get(i)), type);
+
+            if (field.value == null) {
+                continue;
+            }
+
             pkFields.add(field);
         }
 
@@ -379,6 +384,11 @@ public abstract class DefaultDbService implements DbService {
                 }
                 DbField field = new DbField(key, row.get(key.toUpperCase()),
                         type);
+
+                if (field.value == null) {
+                    continue;
+                }
+
                 dbFields.add(field);
             }
         }
@@ -412,6 +422,11 @@ public abstract class DefaultDbService implements DbService {
                 }
                 // update 操作应该传 update 之前的主键值，防止主键被修改造成的数据更新错误
                 DbField field = new DbField(pk, oldPkValues[i], type);
+
+                if (field.value == null) {
+                    continue;
+                }
+
                 pkFields.add(field);
             }
 
@@ -428,6 +443,10 @@ public abstract class DefaultDbService implements DbService {
                     type = DataType.STRING;
                 }
                 DbField field = new DbField(key, row.get(key), type);
+
+                if (field.value == null) {
+                    continue;
+                }
                 dbFields.add(field);
             }
 
@@ -875,9 +894,6 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("INTERVAL MINUTE", DataType.STRING);
             dbDataTypes.put("INTERVAL MINUTE TO SECOND", DataType.STRING);
             dbDataTypes.put("INTERVAL SECOND", DataType.STRING);
-            // DM
-            dbDataTypes.put("BINARY", DataType.STRING);
-            dbDataTypes.put("VARBINARY", DataType.STRING);
 
             dbDataTypes.put("BOOL", DataType.BOOLEAN);
             dbDataTypes.put("BOOLEAN", DataType.BOOLEAN);
@@ -914,18 +930,25 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("LONG RAW", DataType.BLOB);
             dbDataTypes.put("BLOB", DataType.BLOB);
             dbDataTypes.put("BFILE", DataType.BLOB);
-            dbDataTypes.put("BINARY", DataType.BLOB);
+            // dbDataTypes.put("BINARY", DataType.BLOB);
             dbDataTypes.put("VARBINARY", DataType.BLOB);
             dbDataTypes.put("IMAGE", DataType.BLOB);
         }
 
-        if ("kingbase".equals(getDbType())) {
+        if (DbType.KINGBASE.equals(getDbType())) {
             // kingbase
             dbDataTypes.put("BIT", DataType.BOOLEAN);
             dbDataTypes.put("BIT VARYING", DataType.STRING);
-        } else {
-            // DM,mysql
+        } else if (DbType.DAMENG.equals(getDbType())) {
+            dbDataTypes.put("BINARY", DataType.STRING);
+            dbDataTypes.put("VARBINARY", DataType.STRING);
             dbDataTypes.put("BIT", DataType.INTEGER);
+        } else if (DbType.MYSQL.equals(getDbType())) {
+
+            dbDataTypes.put("BIT", DataType.INTEGER);
+            dbDataTypes.put("BINARY", DataType.MYSQL_BINARY);
+            dbDataTypes.put("VARBINARY", DataType.MYSQL_BINARY);
+
         }
 
         return dbDataTypes;
