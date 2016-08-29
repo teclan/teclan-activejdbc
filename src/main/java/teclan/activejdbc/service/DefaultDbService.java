@@ -251,7 +251,7 @@ public abstract class DefaultDbService implements DbService {
         // 全表同步
         if (pkNames == null) {
 
-            final List<String> pkNamesList = getPkNames(table);
+            final String[] pkNamesArray = getPkNamesArray(table);
 
             getTableColumns(table);
 
@@ -260,7 +260,7 @@ public abstract class DefaultDbService implements DbService {
                         @Override
                         public void onNext(Map<String, Object> row) {
                             listener.recordRetrieved(createDbRecord(table,
-                                    action, row, pkNamesList));
+                                    action, row, pkNamesArray));
                         }
                     });
 
@@ -346,55 +346,9 @@ public abstract class DefaultDbService implements DbService {
     }
 
     private DbRecord createDbRecord(String table, String action,
-            Map<String, Object> row, List<String> pkNamesList) {
+            Map<String, Object> row, String[] pkNamesArray) {
 
-        List<DbField> pkFields = new ArrayList<DbField>();
-        List<DbField> dbFields = new ArrayList<DbField>();
-
-        // 构造 PKFilds
-        for (int i = 0; i < pkNamesList.size(); i++) {
-            String columnTypeKey = columnTypeMap.get(table)
-                    .get(pkNamesList.get(i).toUpperCase()).toUpperCase();
-            DataType type = getDBDataTypes().get(columnTypeKey);
-
-            if (type == null) {
-                // LOGGER.error("Data type of {} not found in mapping.", pk);
-                type = DataType.STRING;
-            }
-            DbField field = new DbField(pkNamesList.get(i),
-                    row.get(pkNamesList.get(i)), type);
-
-            if (field.value == null) {
-                continue;
-            }
-
-            pkFields.add(field);
-        }
-
-        // 构造 DBFilds
-        for (String key : row.keySet()) {
-            if (!pkNamesList.contains(key)) {
-                String columnTypeKey = columnTypeMap.get(table)
-                        .get(key.toUpperCase()).toUpperCase();
-                DataType type = getDBDataTypes().get(columnTypeKey);
-                if (type == null) {
-                    // LOGGER.error("Data type of {} not found in mapping.",
-                    // key);
-                    type = DataType.STRING;
-                }
-                DbField field = new DbField(key, row.get(key.toUpperCase()),
-                        type);
-
-                if (field.value == null) {
-                    continue;
-                }
-
-                dbFields.add(field);
-            }
-        }
-
-        return new DbRecord(dataSource.getDbName(), table, action, pkFields,
-                dbFields);
+        return createDbRecord(table, action, row, pkNamesArray, null, null);
     }
 
     private DbRecord createDbRecord(String table, String action,
@@ -539,6 +493,17 @@ public abstract class DefaultDbService implements DbService {
             names.add(row.get(getPkColumnName()).toString());
         }
 
+        return names;
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected String[] getPkNamesArray(String table) {
+        List<Map> result = new DB(name).findAll(getSelectPkNamesSql(table));
+        String[] names = new String[result.size()];
+
+        for (int i = 0; i < result.size(); i++) {
+            names[i] = result.get(i).get(getPkColumnName()).toString();
+        }
         return names;
     }
 
@@ -851,13 +816,6 @@ public abstract class DefaultDbService implements DbService {
 
             dbDataTypes.put("FLOAT", DataType.FLOAT);
 
-            // data type of NUMBER and DOUBLE processed in the same way
-
-            // FIXME(Pudgecon)
-            // 临时修改
-            // 需要改正
-            // dbDataTypes.put("NUMERIC", DataType.INTEGER);
-
             dbDataTypes.put("NUMERIC", DataType.NUMBER);
             dbDataTypes.put("NUMBER", DataType.NUMBER);
             dbDataTypes.put("DEC", DataType.NUMBER);
@@ -869,6 +827,9 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("MONEY", DataType.DOUBLE);
             dbDataTypes.put("SMALLMONEY", DataType.DOUBLE);
             dbDataTypes.put("DOUBLE PRECISION", DataType.DOUBLE);
+
+            dbDataTypes.put("BINARY_FLOAT", DataType.DOUBLE);
+            dbDataTypes.put("BINARY_DOUBLE", DataType.DOUBLE);
 
             dbDataTypes.put("CHAR", DataType.STRING);
             dbDataTypes.put("NCHAR", DataType.STRING);
@@ -922,8 +883,6 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("DBCLOB", DataType.CLOB);
             dbDataTypes.put("CHARACTER LARGE OBJECT", DataType.CLOB);
 
-            dbDataTypes.put("BINARY_FLOAT", DataType.BLOB);
-            dbDataTypes.put("BINARY_DOUBLE", DataType.BLOB);
             dbDataTypes.put("BINARY LARGE OBJECT", DataType.BLOB);
             dbDataTypes.put("BYTE", DataType.BLOB);
             dbDataTypes.put("RAW", DataType.BLOB);
@@ -935,20 +894,22 @@ public abstract class DefaultDbService implements DbService {
             dbDataTypes.put("IMAGE", DataType.BLOB);
         }
 
-        if (DbType.KINGBASE.equals(getDbType())) {
+        if ("kingbase".equals(getDbType())) {
             // kingbase
             dbDataTypes.put("BIT", DataType.BOOLEAN);
             dbDataTypes.put("BIT VARYING", DataType.STRING);
-        } else if (DbType.DAMENG.equals(getDbType())) {
+        } else if ("dm".equals(getDbType())) {
             dbDataTypes.put("BINARY", DataType.STRING);
             dbDataTypes.put("VARBINARY", DataType.STRING);
             dbDataTypes.put("BIT", DataType.INTEGER);
-        } else if (DbType.MYSQL.equals(getDbType())) {
-
+        } else if ("mysql".equals(getDbType())) {
             dbDataTypes.put("BIT", DataType.INTEGER);
-            dbDataTypes.put("BINARY", DataType.MYSQL_BINARY);
-            dbDataTypes.put("VARBINARY", DataType.MYSQL_BINARY);
+            dbDataTypes.put("BINARY", DataType.COMMON_BINARY);
+            dbDataTypes.put("VARBINARY", DataType.COMMON_BINARY);
 
+            // 包括sqlserver2000,sqlserver2000+
+        } else if (getDbType().getValue().toLowerCase().contains("sqlserver")) {
+            dbDataTypes.put("BINARY", DataType.COMMON_BINARY);
         }
 
         return dbDataTypes;
