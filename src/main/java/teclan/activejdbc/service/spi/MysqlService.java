@@ -13,7 +13,7 @@ import teclan.activejdbc.service.DefaultDbService;
 public class MysqlService extends DefaultDbService {
 
     private static final String DRIVER_CLASS                 = "com.mysql.jdbc.Driver";
-    private static final String URL_TEMPLATE                 = "jdbc:mysql://%s:%d/%s";
+    private static final String URL_TEMPLATE = "jdbc:mysql://%s:%d/%s?useUnicode=true&characterEncoding=UTF-8";
     private static final String SELECT_PK_NAMES_SQL_TEMPLATE = "select concat(c.column_name) as 'column_name' "
             + "from information_schema.table_constraints as t,"
             + "information_schema.key_column_usage as c "
