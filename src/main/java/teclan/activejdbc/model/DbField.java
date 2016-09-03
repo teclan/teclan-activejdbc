@@ -1,9 +1,9 @@
 package teclan.activejdbc.model;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Map;
 
-import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class DbField {
             this.value = null;
             return;
         }
-        this.value = Convert.toBytes(value);
+        this.value = Convert.toBytes(value, "UTF-8");
     }
 
     public String getKey() {
@@ -50,14 +50,19 @@ public class DbField {
             return null;
         }
 
-        if (getDataType().equals(DataType.BLOB)) {
-            return "<BLOB>...";
-        } else if (getDataType().equals(DataType.CLOB)) {
-            return "<CLOB>...";
-        } else if (getDataType().equals(DataType.DATETIME)) {
-            return new String(value);
-        } else {
-            return new String(value);
+        try {
+            if (getDataType().equals(DataType.BLOB)) {
+                return "<BLOB>...";
+            } else if (getDataType().equals(DataType.CLOB)) {
+                return "<CLOB>...";
+            } else if (getDataType().equals(DataType.DATETIME)) {
+                return new String(value, "UTF-8");
+            } else {
+                return new String(value, "UTF-8");
+            }
+        } catch (Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+            return null;
         }
     }
 
@@ -113,7 +118,12 @@ public class DbField {
         } else if (getDataType().equals(DataType.STRING)) {
             return getStringValue();
         } else if (getDataType().equals(DataType.CLOB)) {
-            return new String(value);
+            try {
+                return new String(value, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                LOGGER.debug(e.getMessage(), e);
+                return null;
+            }
         }
 
         return null;
